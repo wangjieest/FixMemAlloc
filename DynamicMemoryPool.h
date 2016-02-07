@@ -1,13 +1,6 @@
-# FixMemAlloc
-Fixed-size blocks allocation for C and C++
+/*
+FixMemAlloc - Fixed-size blocks allocation for C and C++
 
-## Abstract
-This source provides with raw C implementation of fixed-size blocks allocation
-for use in embedded and microcontroller areas, where limited resources plays
-key role. Additional C++ wrappers extends usability for other applications
-where fast memory allocation/deallocation is required e.g. lists, queues etc.
-
-## License
 Copyright (c) 2016, Mariusz Moczala
 All rights reserved.
 
@@ -34,4 +27,48 @@ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
 SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
+
+#ifndef DynamicMemoryPoolH
+#define DynamicMemoryPoolH
+
+#include "MemoryPool.h"
+
+template <class DataType>
+class DynamicMemoryPool : protected MemoryPool
+{
+    public:
+
+        DynamicMemoryPool(size_t numberOfElements)
+        {
+            const size_t memoryRegionSize = sizeof(DataType) * numberOfElements;
+            memoryRegion = new DataType[numberOfElements];
+            initMemoryPool(this, memoryRegion, memoryRegionSize, sizeof(DataType));
+        }
+
+        ~DynamicMemoryPool()
+        {
+            delete [] memoryRegion;
+        }
+
+        DataType *allocateBlock()
+        {
+            void *pointer = ::allocateBlock(this);
+            return static_cast<DataType *>(pointer);
+        }
+
+        void releaseBlock(DataType *pointer)
+        {
+            ::releaseBlock(this, pointer);
+        }
+
+
+    private:
+
+        DataType *memoryRegion;
+
+        DynamicMemoryPool(const DynamicMemoryPool &dynamicMemoryPool);
+        DynamicMemoryPool & operator =(const DynamicMemoryPool &dynamicMemoryPool);
+};
+
+#endif

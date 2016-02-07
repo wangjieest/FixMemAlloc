@@ -1,13 +1,6 @@
-# FixMemAlloc
-Fixed-size blocks allocation for C and C++
+/*
+FixMemAlloc - Fixed-size blocks allocation for C and C++
 
-## Abstract
-This source provides with raw C implementation of fixed-size blocks allocation
-for use in embedded and microcontroller areas, where limited resources plays
-key role. Additional C++ wrappers extends usability for other applications
-where fast memory allocation/deallocation is required e.g. lists, queues etc.
-
-## License
 Copyright (c) 2016, Mariusz Moczala
 All rights reserved.
 
@@ -34,4 +27,44 @@ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
 SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
+
+#include <stddef.h>
+#include "MemoryPool.h"
+
+void initMemoryPool(struct MemoryPool *memoryPool,
+    void *memoryRegion, size_t memoryRegionSize, size_t blockSize)
+{
+    if(blockSize < sizeof(void *))
+        blockSize = sizeof(void *);
+
+    memoryPool->blockSize = blockSize;
+    memoryPool->numberOfNotYetUsedBlocks = memoryRegionSize / blockSize;
+    memoryPool->notYetUsedBlocks = memoryRegion;
+    memoryPool->firstFreeBlock = NULL;
+}
+
+void *allocateBlock(struct MemoryPool *memoryPool)
+{
+    void *pointer;
+
+    pointer = memoryPool->firstFreeBlock;
+    if(pointer) {
+        memoryPool->firstFreeBlock = *(void **) pointer;
+        return pointer;
+    }
+
+    if(memoryPool->numberOfNotYetUsedBlocks) {
+        pointer = memoryPool->notYetUsedBlocks;
+        memoryPool->notYetUsedBlocks = ((uint8_t *) pointer) + memoryPool->blockSize;
+        memoryPool->numberOfNotYetUsedBlocks--;
+    }
+
+    return pointer;
+}
+
+void releaseBlock(struct MemoryPool *memoryPool, void *pointer)
+{
+    *(void **) pointer = memoryPool->firstFreeBlock;
+    memoryPool->firstFreeBlock = pointer;
+}
