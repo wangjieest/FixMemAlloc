@@ -29,46 +29,25 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
-#ifndef DynamicMemoryPoolH
-#define DynamicMemoryPoolH
+#include <iostream>
+#include <list>
+#include <cstdlib>
+#include "MemoryPoolAllocator.h"
 
-#include "MemoryPool.h"
-
-template <class DataType>
-class DynamicMemoryPool : protected MemoryPool
+void runTest(unsigned seed, unsigned iterations)
 {
-    public:
+    std::list<int> testList;
+    //std::list<int, MemoryPoolAllocator<int> > testList((MemoryPoolAllocator<int>(iterations)));
 
-        DynamicMemoryPool(size_t numberOfElements)
-        {
-            const size_t memoryRegionSize = sizeof(DataType) * numberOfElements;
-            memoryRegion = new DataType[numberOfElements];
-            initMemoryPool(this, memoryRegion, memoryRegionSize, sizeof(DataType));
-        }
+    srand(seed);
+    while(iterations-- > 1)
+        testList.push_back(rand());
+}
 
-        ~DynamicMemoryPool()
-        {
-            delete [] memoryRegion;
-        }
-
-        DataType *allocateBlock()
-        {
-            void *pointer = ::allocateBlock(this);
-            return static_cast<DataType *>(pointer);
-        }
-
-        void releaseBlock(DataType *pointer)
-        {
-            ::releaseBlock(this, pointer);
-        }
-
-
-    private:
-
-        DataType *memoryRegion;
-
-        DynamicMemoryPool(const DynamicMemoryPool &dynamicMemoryPool);
-        DynamicMemoryPool & operator =(const DynamicMemoryPool &dynamicMemoryPool);
-};
-
-#endif
+int main(int argc, char **argv)
+{
+    std::cout << "Begin..." << std::endl;
+    runTest(1234, 128*1024*1024);
+    std::cout << "Done." << std::endl;
+    return 0;
+}

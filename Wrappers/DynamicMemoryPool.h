@@ -29,32 +29,46 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
-#ifndef MemoryPoolH
-#define MemoryPoolH
+#ifndef DynamicMemoryPoolH
+#define DynamicMemoryPoolH
 
-#include <stddef.h>
-#include <stdint.h>
+#include "MemoryPool.h"
 
-struct MemoryPool
+template <class DataType>
+class DynamicMemoryPool : protected MemoryPool
 {
-    size_t blockSize;
-    size_t numberOfNotYetUsedBlocks;
-    void *notYetUsedBlocks;
-    void *firstFreeBlock;
+    public:
+
+        DynamicMemoryPool(std::size_t numberOfElements)
+        {
+            const std::size_t memoryRegionSize = sizeof(DataType) * numberOfElements;
+            memoryRegion = numberOfElements ? new DataType[numberOfElements] : NULL;
+            initMemoryPool(this, memoryRegion, memoryRegionSize, sizeof(DataType));
+        }
+
+        ~DynamicMemoryPool()
+        {
+            delete[] memoryRegion;
+        }
+
+        DataType *allocateBlock()
+        {
+            void *pointer = ::allocateBlock(this);
+            return static_cast<DataType *>(pointer);
+        }
+
+        void releaseBlock(DataType *pointer)
+        {
+            ::releaseBlock(this, pointer);
+        }
+
+
+    private:
+
+        DataType *memoryRegion;
+
+        DynamicMemoryPool(const DynamicMemoryPool &dynamicMemoryPool);
+        DynamicMemoryPool & operator =(const DynamicMemoryPool &dynamicMemoryPool);
 };
-
-#ifdef __cplusplus
-    extern "C" {
-#endif
-
-    void initMemoryPool(struct MemoryPool *memoryPool,
-        void *memoryRegion, size_t memoryRegionSize, size_t blockSize);
-
-    void *allocateBlock(struct MemoryPool *memoryPool);
-    void releaseBlock(struct MemoryPool *memoryPool, void *pointer);
-
-#ifdef __cplusplus
-    };
-#endif
 
 #endif
