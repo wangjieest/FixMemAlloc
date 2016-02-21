@@ -29,25 +29,26 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
-#include <iostream>
-#include <list>
-#include <cstdlib>
+#include "PerformanceTest.h"
 #include "MemoryPoolAllocator.h"
+#include <list>
 
-void runTest(unsigned seed, unsigned iterations)
+const unsigned numberOfIterations = 128 * 1024 * 1024;
+
+PERFORMANCE_TEST(List, DefaultAllocator)
 {
     std::list<int> testList;
-    //std::list<int, MemoryPoolAllocator<int> > testList((MemoryPoolAllocator<int>(iterations)));
 
-    srand(seed);
-    while(iterations-- > 1)
-        testList.push_back(rand());
+    for(unsigned iteration = 0; iteration < numberOfIterations; iteration++)
+        testList.push_back(iteration);
 }
 
-int main(int argc, char **argv)
+PERFORMANCE_TEST(List, MemoryPoolAllocator)
 {
-    std::cout << "Begin..." << std::endl;
-    runTest(1234, 128*1024*1024);
-    std::cout << "Done." << std::endl;
-    return 0;
+    MemoryPoolAllocator<int> allocator(numberOfIterations);
+    std::list<int, MemoryPoolAllocator<int> > testList(allocator);
+
+    for(unsigned iteration = 0; iteration < numberOfIterations; iteration++)
+        testList.push_back(iteration);
 }
+

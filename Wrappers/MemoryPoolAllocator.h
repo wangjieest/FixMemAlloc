@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 #ifndef MemoryPoolAllocatorH
 #define MemoryPoolAllocatorH
 
+#include <memory>
 #include "MemoryPool.h"
 
 template <class T>
@@ -80,19 +81,16 @@ class MemoryPoolAllocator : protected MemoryPool
 
         pointer allocate(size_type n, std::allocator<void>::const_pointer hint = 0)
         {
-            if(!memoryRegion) {
-                memoryRegion = new T[numberOfElements];
-                const std::size_t memoryRegionSize = sizeof(T) * numberOfElements;
-                initMemoryPool(this, memoryRegion, memoryRegionSize, sizeof(T));
-            }
+            if(!memoryRegion)
+                initialize();
 
-            void *p = ::allocateBlock(this);
+            void *p = allocateBlock(this);
             return static_cast<pointer>(p);
         }
 
         void deallocate(pointer p, size_type n)
         {
-            ::releaseBlock(this, p);
+            releaseBlock(this, p);
         }
 
         void construct(pointer p, const_reference val)
@@ -115,6 +113,13 @@ class MemoryPoolAllocator : protected MemoryPool
 
         const size_type numberOfElements;
         pointer memoryRegion;
+
+        void initialize()
+        {
+            memoryRegion = new T[numberOfElements];
+            const std::size_t memoryRegionSize = sizeof(T) * numberOfElements;
+            initializeMemoryPool(this, memoryRegion, memoryRegionSize, sizeof(T));
+        }
 };
 
 #endif

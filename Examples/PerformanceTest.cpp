@@ -29,46 +29,51 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
-#ifndef DynamicMemoryPoolH
-#define DynamicMemoryPoolH
+#include <iostream>
+#include "PerformanceTest.h"
+#include "PerformanceTimer.h"
 
-#include "MemoryPool.h"
-
-template <class DataType>
-class DynamicMemoryPool : protected MemoryPool
+PerformanceTest &PerformanceTest::getSingleInstance()
 {
-    public:
+    static PerformanceTest performanceTest;
+    return performanceTest;
+}
 
-        DynamicMemoryPool(std::size_t numberOfElements)
-        {
-            const std::size_t memoryRegionSize = sizeof(DataType) * numberOfElements;
-            memoryRegion = numberOfElements ? new DataType[numberOfElements] : NULL;
-            ::initializeMemoryPool(this, memoryRegion, memoryRegionSize, sizeof(DataType));
-        }
+void PerformanceTest::registerTestFunction(const PerformanceTestFunction *testFunction)
+{
+    PerformanceTest &performanceTest = getSingleInstance();
+    performanceTest.registeredFunctions.push_back(testFunction);
+}
 
-        ~DynamicMemoryPool()
-        {
-            delete[] memoryRegion;
-        }
+void PerformanceTest::runAllTests()
+{
+    PerformanceTest &performanceTest = getSingleInstance();
 
-        DataType *allocateBlock()
-        {
-            void *pointer = ::allocateBlock(this);
-            return static_cast<DataType *>(pointer);
-        }
+    TestIterator i = performanceTest.registeredFunctions.begin();
+    for(; i != performanceTest.registeredFunctions.end(); i++)
+        performanceTest.runSingleTest(*i);
+}
 
-        void releaseBlock(DataType *pointer)
-        {
-            ::releaseBlock(this, pointer);
-        }
+void PerformanceTest::runSingleTest(const PerformanceTestFunction *testFunction)
+{
+    std::cout << "Starting " << testFunction->getTestName() << " test..." << std::endl;
 
+    PerformanceTimer performanceTimer;
+    performanceTimer.start();
+    testFunction->testFunction();
+    performanceTimer.stop();
 
-    private:
+    std::cout << "  Completed in: " << performanceTimer.getTime() << " sec." << std::endl;
+    std::cout << std::endl;
+}
 
-        DataType *memoryRegion;
+int main(int argc, char **argv)
+{
+    std::cout << "Beginning performance tests." << std::endl;
+    std::cout << std::endl;
 
-        DynamicMemoryPool(const DynamicMemoryPool &dynamicMemoryPool);
-        DynamicMemoryPool & operator =(const DynamicMemoryPool &dynamicMemoryPool);
-};
+    PerformanceTest::runAllTests();
 
-#endif
+    std::cout << "Done." << std::endl;
+    return 0;
+}

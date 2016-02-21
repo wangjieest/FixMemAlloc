@@ -42,7 +42,7 @@ TEST(MemoryPool, SimpleAllocScheme)
     uint8_t memoryRegion[memoryRegionSize];
 
     MemoryPool memoryPool;
-    initMemoryPool(&memoryPool, memoryRegion, memoryRegionSize, blockSize);
+    initializeMemoryPool(&memoryPool, memoryRegion, memoryRegionSize, blockSize);
 
     void *ptr1 = allocateBlock(&memoryPool);
     void *ptr2 = allocateBlock(&memoryPool);

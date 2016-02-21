@@ -47,7 +47,7 @@ struct MemoryPool
     extern "C" {
 #endif
 
-    void initMemoryPool(struct MemoryPool *memoryPool,
+    void initializeMemoryPool(struct MemoryPool *memoryPool,
         void *memoryRegion, size_t memoryRegionSize, size_t blockSize);
 
     void *allocateBlock(struct MemoryPool *memoryPool);

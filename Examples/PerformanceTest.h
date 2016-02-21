@@ -29,46 +29,44 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
-#ifndef DynamicMemoryPoolH
-#define DynamicMemoryPoolH
+#ifndef PerformanceTestH
+#define PerformanceTestH
 
-#include "MemoryPool.h"
+#include <list>
 
-template <class DataType>
-class DynamicMemoryPool : protected MemoryPool
+class PerformanceTestFunction
 {
     public:
 
-        DynamicMemoryPool(std::size_t numberOfElements)
-        {
-            const std::size_t memoryRegionSize = sizeof(DataType) * numberOfElements;
-            memoryRegion = numberOfElements ? new DataType[numberOfElements] : NULL;
-            ::initializeMemoryPool(this, memoryRegion, memoryRegionSize, sizeof(DataType));
-        }
+        virtual const char *getTestName() const = 0;
+        virtual void testFunction() const = 0;
+};
 
-        ~DynamicMemoryPool()
-        {
-            delete[] memoryRegion;
-        }
+class PerformanceTest
+{
+    public:
 
-        DataType *allocateBlock()
-        {
-            void *pointer = ::allocateBlock(this);
-            return static_cast<DataType *>(pointer);
-        }
-
-        void releaseBlock(DataType *pointer)
-        {
-            ::releaseBlock(this, pointer);
-        }
+        static void registerTestFunction(const PerformanceTestFunction *testFunction);
+        static void runAllTests();
 
 
     private:
 
-        DataType *memoryRegion;
+        typedef std::list<const PerformanceTestFunction *> TestList;
+        typedef TestList::iterator TestIterator;
 
-        DynamicMemoryPool(const DynamicMemoryPool &dynamicMemoryPool);
-        DynamicMemoryPool & operator =(const DynamicMemoryPool &dynamicMemoryPool);
+        TestList registeredFunctions;
+
+        static PerformanceTest &getSingleInstance();
+        void runSingleTest(const PerformanceTestFunction *testFunction);
 };
+
+#define PERFORMANCE_TEST(name, type) \
+    class _TestFunction##name##type : public PerformanceTestFunction { public: \
+        _TestFunction##name##type() { PerformanceTest::registerTestFunction(this); } \
+        virtual const char *getTestName() const { return #name "." #type; } \
+        virtual void testFunction() const; \
+    } _func##name##type; \
+    void _TestFunction##name##type::testFunction() const
 
 #endif

@@ -8,6 +8,7 @@ CC_SRC := \
 	$(PRJ_DIR)/Sources/MemoryPool.c
 
 CXX_SRC := \
+	$(PRJ_DIR)/Examples/PerformanceTest.cpp \
 	$(PRJ_DIR)/Examples/List.cpp
 
 INCLUDE := \

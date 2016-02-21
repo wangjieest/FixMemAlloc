@@ -29,46 +29,37 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
-#ifndef DynamicMemoryPoolH
-#define DynamicMemoryPoolH
+#ifndef PerformanceTimerH
+#define PerformanceTimerH
 
-#include "MemoryPool.h"
+#include <time.h>
 
-template <class DataType>
-class DynamicMemoryPool : protected MemoryPool
+class PerformanceTimer
 {
     public:
 
-        DynamicMemoryPool(std::size_t numberOfElements)
+        inline void start()
         {
-            const std::size_t memoryRegionSize = sizeof(DataType) * numberOfElements;
-            memoryRegion = numberOfElements ? new DataType[numberOfElements] : NULL;
-            ::initializeMemoryPool(this, memoryRegion, memoryRegionSize, sizeof(DataType));
+            clock_gettime(CLOCK_MONOTONIC, &startTime);
         }
 
-        ~DynamicMemoryPool()
+        inline void stop()
         {
-            delete[] memoryRegion;
+            clock_gettime(CLOCK_MONOTONIC, &stopTime);
         }
 
-        DataType *allocateBlock()
+        inline double getTime() const
         {
-            void *pointer = ::allocateBlock(this);
-            return static_cast<DataType *>(pointer);
-        }
-
-        void releaseBlock(DataType *pointer)
-        {
-            ::releaseBlock(this, pointer);
+            return
+                stopTime.tv_sec + stopTime.tv_nsec * 1e-9 -
+                startTime.tv_sec - startTime.tv_nsec * 1e-9;
         }
 
 
     private:
 
-        DataType *memoryRegion;
-
-        DynamicMemoryPool(const DynamicMemoryPool &dynamicMemoryPool);
-        DynamicMemoryPool & operator =(const DynamicMemoryPool &dynamicMemoryPool);
+        timespec startTime;
+        timespec stopTime;
 };
 
 #endif

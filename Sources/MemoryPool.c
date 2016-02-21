@@ -31,7 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 #include "MemoryPool.h"
 
-void initMemoryPool(struct MemoryPool *memoryPool,
+void initializeMemoryPool(struct MemoryPool *memoryPool,
     void *memoryRegion, size_t memoryRegionSize, size_t blockSize)
 {
     if(blockSize < sizeof(void *))
