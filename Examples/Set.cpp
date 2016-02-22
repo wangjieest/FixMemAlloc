@@ -29,32 +29,30 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
-#ifndef MemoryPoolH
-#define MemoryPoolH
+#include "PerformanceTest.h"
+#include "MemoryPoolAllocator.h"
+#include <set>
 
-#include <stddef.h>
-#include <stdint.h>
+const unsigned numberOfIterations = 16 * 1024 * 1024;
 
-struct MemoryPool
+typedef int DataType;
+typedef MemoryPoolAllocator<DataType> Allocator;
+typedef std::set<DataType> DefaultSet;
+typedef std::set<DataType, std::less<DataType>, Allocator> MemoryPoolSet;
+
+PERFORMANCE_TEST(Set, DefaultAllocator)
 {
-    size_t blockSize;
-    size_t numberOfNotYetUsedBlocks;
-    void *notYetUsedBlocks;
-    void *firstFreeBlock;
-};
+    DefaultSet testSet;
 
-#ifdef __cplusplus
-    extern "C" {
-#endif
+    for(unsigned iteration = 0; iteration < numberOfIterations; iteration++)
+        testSet.insert(iteration);
+}
 
-    void initializeMemoryPool(struct MemoryPool *memoryPool,
-        void *memoryRegion, size_t memoryRegionSize, size_t blockSize);
+PERFORMANCE_TEST(Set, MemoryPoolAllocator)
+{
+    Allocator allocator(numberOfIterations);
+    MemoryPoolSet testSet(MemoryPoolSet::key_compare(), allocator);
 
-    void *allocateBlock(struct MemoryPool *memoryPool);
-    void releaseBlock(struct MemoryPool *memoryPool, void *pointer);
-
-#ifdef __cplusplus
-    }
-#endif
-
-#endif
+    for(unsigned iteration = 0; iteration < numberOfIterations; iteration++)
+        testSet.insert(iteration);
+}

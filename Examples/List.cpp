@@ -35,9 +35,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 const unsigned numberOfIterations = 128 * 1024 * 1024;
 
+typedef int DataType;
+typedef MemoryPoolAllocator<DataType> Allocator;
+typedef std::list<DataType> DefaultList;
+typedef std::list<DataType, Allocator> MemoryPoolList;
+
 PERFORMANCE_TEST(List, DefaultAllocator)
 {
-    std::list<int> testList;
+    DefaultList testList;
 
     for(unsigned iteration = 0; iteration < numberOfIterations; iteration++)
         testList.push_back(iteration);
@@ -45,10 +50,9 @@ PERFORMANCE_TEST(List, DefaultAllocator)
 
 PERFORMANCE_TEST(List, MemoryPoolAllocator)
 {
-    MemoryPoolAllocator<int> allocator(numberOfIterations);
-    std::list<int, MemoryPoolAllocator<int> > testList(allocator);
+    Allocator allocator(numberOfIterations);
+    MemoryPoolList testList(allocator);
 
     for(unsigned iteration = 0; iteration < numberOfIterations; iteration++)
         testList.push_back(iteration);
 }
-
