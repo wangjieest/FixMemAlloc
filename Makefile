@@ -10,7 +10,8 @@ CC_SRC := \
 CXX_SRC := \
 	$(PRJ_DIR)/Examples/PerformanceTest.cpp \
 	$(PRJ_DIR)/Examples/List.cpp \
-	$(PRJ_DIR)/Examples/Set.cpp
+	$(PRJ_DIR)/Examples/Set.cpp \
+	$(PRJ_DIR)/Examples/Map.cpp
 
 INCLUDE := \
 	$(PRJ_DIR)/Sources \
