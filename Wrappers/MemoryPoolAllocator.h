@@ -54,21 +54,21 @@ class MemoryPoolAllocator : protected MemoryPool
             typedef MemoryPoolAllocator<U> other;
         };
 
-        MemoryPoolAllocator(size_type numberOfElements) :
-            numberOfElements(numberOfElements),
+        MemoryPoolAllocator(size_type numberOfBlocks) :
+            numberOfBlocks(numberOfBlocks),
             memoryRegion(NULL)
         {
         }
 
         MemoryPoolAllocator(const MemoryPoolAllocator &allocator) :
-            numberOfElements(allocator.getNumberOfElements()),
+            numberOfBlocks(allocator.getNumberOfBlocks()),
             memoryRegion(NULL)
         {
         }
 
         template <class U>
         MemoryPoolAllocator(const MemoryPoolAllocator<U> &other) :
-            numberOfElements(other.getNumberOfElements()),
+            numberOfBlocks(other.getNumberOfBlocks()),
             memoryRegion(NULL)
         {
         }
@@ -103,22 +103,21 @@ class MemoryPoolAllocator : protected MemoryPool
             p->~T();
         }
 
-        size_type getNumberOfElements() const
+        size_type getNumberOfBlocks() const
         {
-            return numberOfElements;
+            return numberOfBlocks;
         }
 
 
     private:
 
-        const size_type numberOfElements;
+        const size_type numberOfBlocks;
         pointer memoryRegion;
 
         void initialize()
         {
-            memoryRegion = new T[numberOfElements];
-            const std::size_t memoryRegionSize = sizeof(T) * numberOfElements;
-            initializeMemoryPool(this, memoryRegion, memoryRegionSize, sizeof(T));
+            memoryRegion = new T[numberOfBlocks];
+            initializeMemoryPool(this, memoryRegion, numberOfBlocks, sizeof(T));
         }
 };
 

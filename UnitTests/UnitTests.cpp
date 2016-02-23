@@ -38,11 +38,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 TEST(MemoryPool, SimpleAllocScheme)
 {
     const size_t blockSize = 23;
-    const size_t memoryRegionSize = 73;
+    const size_t numberOfBlocks = 3;
+    const size_t memoryRegionSize = numberOfBlocks * blockSize;
     uint8_t memoryRegion[memoryRegionSize];
 
     MemoryPool memoryPool;
-    initializeMemoryPool(&memoryPool, memoryRegion, memoryRegionSize, blockSize);
+    initializeMemoryPool(&memoryPool, memoryRegion, numberOfBlocks, blockSize);
 
     void *ptr1 = allocateBlock(&memoryPool);
     void *ptr2 = allocateBlock(&memoryPool);
@@ -66,10 +67,10 @@ TEST(MemoryPool, SimpleAllocScheme)
 TEST(StaticMemoryPool, SimpleAllocScheme)
 {
     typedef size_t TestDataType;
-    const size_t numberOfElements = 3;
-    TestDataType memoryRegion[numberOfElements];
+    const size_t numberOfBlocks = 3;
+    TestDataType memoryRegion[numberOfBlocks];
 
-    StaticMemoryPool<TestDataType> staticMemoryPool(memoryRegion, numberOfElements);
+    StaticMemoryPool<TestDataType> staticMemoryPool(memoryRegion, numberOfBlocks);
 
     TestDataType *ptr1 = staticMemoryPool.allocateBlock();
     TestDataType *ptr2 = staticMemoryPool.allocateBlock();
@@ -93,9 +94,9 @@ TEST(StaticMemoryPool, SimpleAllocScheme)
 TEST(DynamicMemoryPool, SimpleAllocScheme)
 {
     typedef size_t TestDataType;
-    const size_t numberOfElements = 3;
+    const size_t numberOfBlocks = 3;
 
-    DynamicMemoryPool<TestDataType> dynamicMemoryPool(numberOfElements);
+    DynamicMemoryPool<TestDataType> dynamicMemoryPool(numberOfBlocks);
 
     TestDataType *ptr1 = dynamicMemoryPool.allocateBlock();
     TestDataType *ptr2 = dynamicMemoryPool.allocateBlock();

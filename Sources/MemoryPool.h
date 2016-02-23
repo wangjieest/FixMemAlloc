@@ -48,7 +48,7 @@ struct MemoryPool
 #endif
 
     void initializeMemoryPool(struct MemoryPool *memoryPool,
-        void *memoryRegion, size_t memoryRegionSize, size_t blockSize);
+        void *memoryRegion, size_t numberOfBlocks, size_t blockSize);
 
     void *allocateBlock(struct MemoryPool *memoryPool);
     void releaseBlock(struct MemoryPool *memoryPool, void *pointer);

@@ -32,13 +32,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 #include "MemoryPool.h"
 
 void initializeMemoryPool(struct MemoryPool *memoryPool,
-    void *memoryRegion, size_t memoryRegionSize, size_t blockSize)
+    void *memoryRegion, size_t numberOfBlocks, size_t blockSize)
 {
     if(blockSize < sizeof(void *))
         blockSize = sizeof(void *);
 
     memoryPool->blockSize = blockSize;
-    memoryPool->numberOfNotYetUsedBlocks = memoryRegionSize / blockSize;
+    memoryPool->numberOfNotYetUsedBlocks = numberOfBlocks;
     memoryPool->notYetUsedBlocks = memoryRegion;
     memoryPool->firstFreeBlock = NULL;
 }

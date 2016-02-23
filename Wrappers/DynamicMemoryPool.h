@@ -39,11 +39,10 @@ class DynamicMemoryPool : protected MemoryPool
 {
     public:
 
-        DynamicMemoryPool(std::size_t numberOfElements)
+        DynamicMemoryPool(std::size_t numberOfBlocks)
         {
-            const std::size_t memoryRegionSize = sizeof(DataType) * numberOfElements;
-            memoryRegion = numberOfElements ? new DataType[numberOfElements] : NULL;
-            ::initializeMemoryPool(this, memoryRegion, memoryRegionSize, sizeof(DataType));
+            memoryRegion = numberOfBlocks ? new DataType[numberOfBlocks] : NULL;
+            ::initializeMemoryPool(this, memoryRegion, numberOfBlocks, sizeof(DataType));
         }
 
         ~DynamicMemoryPool()

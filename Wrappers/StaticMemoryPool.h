@@ -39,10 +39,9 @@ class StaticMemoryPool : protected MemoryPool
 {
     public:
 
-        StaticMemoryPool(DataType *memoryRegion, std::size_t numberOfElements)
+        StaticMemoryPool(DataType *memoryRegion, std::size_t numberOfBlocks)
         {
-            const std::size_t memoryRegionSize = sizeof(DataType) * numberOfElements;
-            ::initializeMemoryPool(this, memoryRegion, memoryRegionSize, sizeof(DataType));
+            ::initializeMemoryPool(this, memoryRegion, numberOfBlocks, sizeof(DataType));
         }
 
         DataType *allocateBlock()
