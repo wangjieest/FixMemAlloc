@@ -33,7 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 #include "MemoryPoolAllocator.h"
 #include <list>
 
-const unsigned numberOfIterations = 128 * 1024 * 1024;
+const unsigned numberOfIterations = 16 * 1024 * 1024;
 
 typedef int DataType;
 typedef MemoryPoolAllocator<DataType> Allocator;

@@ -81,10 +81,16 @@ class MemoryPoolAllocator : protected MemoryPool
 
         pointer allocate(size_type n, std::allocator<void>::const_pointer hint = 0)
         {
+            if(n != 1 || hint)
+                throw std::bad_alloc();
+
             if(!memoryRegion)
                 initialize();
 
             void *p = allocateBlock(this);
+            if(!p)
+                throw std::bad_alloc();
+
             return static_cast<pointer>(p);
         }
 
