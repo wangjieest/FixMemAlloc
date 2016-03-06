@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 #include <set>
 
 const unsigned numberOfIterations = 2 * 1024 * 1024;
+const unsigned growByNumberOfElements = 1024;
 
 typedef int DataType;
 typedef MemoryPoolAllocator<DataType> Allocator;
@@ -50,7 +51,7 @@ PERFORMANCE_TEST(Set, DefaultAllocator)
 
 PERFORMANCE_TEST(Set, MemoryPoolAllocator)
 {
-    Allocator allocator(numberOfIterations);
+    Allocator allocator(growByNumberOfElements);
     MemoryPoolSet testSet(MemoryPoolSet::key_compare(), allocator);
 
     for(unsigned iteration = 0; iteration < numberOfIterations; iteration++)

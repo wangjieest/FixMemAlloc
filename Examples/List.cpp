@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 #include <list>
 
 const unsigned numberOfIterations = 16 * 1024 * 1024;
+const unsigned growByNumberOfElements = 1024;
 
 typedef int DataType;
 typedef MemoryPoolAllocator<DataType> Allocator;
@@ -50,7 +51,7 @@ PERFORMANCE_TEST(List, DefaultAllocator)
 
 PERFORMANCE_TEST(List, MemoryPoolAllocator)
 {
-    Allocator allocator(numberOfIterations);
+    Allocator allocator(growByNumberOfElements);
     MemoryPoolList testList(allocator);
 
     for(unsigned iteration = 0; iteration < numberOfIterations; iteration++)

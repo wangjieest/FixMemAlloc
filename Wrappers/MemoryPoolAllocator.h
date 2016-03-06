@@ -33,10 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 #define MemoryPoolAllocatorH
 
 #include <memory>
-#include "MemoryPool.h"
+#include "GrowingMemoryPool.h"
 
 template <class T>
-class MemoryPoolAllocator : protected MemoryPool
+class MemoryPoolAllocator : protected GrowingMemoryPool<T>
 {
     public:
 
@@ -54,29 +54,25 @@ class MemoryPoolAllocator : protected MemoryPool
             typedef MemoryPoolAllocator<U> other;
         };
 
-        MemoryPoolAllocator(size_type numberOfBlocks) :
-            numberOfBlocks(numberOfBlocks),
-            memoryRegion(NULL)
+        const size_type growByNumberOfBlocks;
+
+        MemoryPoolAllocator(size_type growByNumberOfBlocks = 1024) :
+            GrowingMemoryPool<T>(growByNumberOfBlocks),
+            growByNumberOfBlocks(growByNumberOfBlocks)
         {
         }
 
         MemoryPoolAllocator(const MemoryPoolAllocator &allocator) :
-            numberOfBlocks(allocator.getNumberOfBlocks()),
-            memoryRegion(NULL)
+            GrowingMemoryPool<T>(allocator.growByNumberOfBlocks),
+            growByNumberOfBlocks(allocator.growByNumberOfBlocks)
         {
         }
 
         template <class U>
         MemoryPoolAllocator(const MemoryPoolAllocator<U> &other) :
-            numberOfBlocks(other.getNumberOfBlocks()),
-            memoryRegion(NULL)
+            GrowingMemoryPool<T>(other.growByNumberOfBlocks),
+            growByNumberOfBlocks(other.growByNumberOfBlocks)
         {
-        }
-
-        ~MemoryPoolAllocator()
-        {
-            delete[] memoryRegion;
-            memoryRegion = NULL;
         }
 
         pointer allocate(size_type n, std::allocator<void>::const_pointer hint = 0)
@@ -84,19 +80,16 @@ class MemoryPoolAllocator : protected MemoryPool
             if(n != 1 || hint)
                 throw std::bad_alloc();
 
-            if(!memoryRegion)
-                initialize();
-
-            void *p = allocateBlock(this);
+            pointer p = GrowingMemoryPool<T>::allocateBlock();
             if(!p)
                 throw std::bad_alloc();
 
-            return static_cast<pointer>(p);
+            return p;
         }
 
         void deallocate(pointer p, size_type n)
         {
-            releaseBlock(this, p);
+            GrowingMemoryPool<T>::releaseBlock(p);
         }
 
         void construct(pointer p, const_reference val)
@@ -107,23 +100,6 @@ class MemoryPoolAllocator : protected MemoryPool
         void destroy(pointer p)
         {
             p->~T();
-        }
-
-        size_type getNumberOfBlocks() const
-        {
-            return numberOfBlocks;
-        }
-
-
-    private:
-
-        const size_type numberOfBlocks;
-        pointer memoryRegion;
-
-        void initialize()
-        {
-            memoryRegion = new T[numberOfBlocks];
-            initializeMemoryPool(this, memoryRegion, numberOfBlocks, sizeof(T));
         }
 };
 

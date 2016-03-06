@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 #include <map>
 
 const unsigned numberOfIterations = 2 * 1024 * 1024;
+const unsigned growByNumberOfElements = 1024;
 
 typedef int KeyType;
 typedef int DataType;
@@ -52,7 +53,7 @@ PERFORMANCE_TEST(Map, DefaultAllocator)
 
 PERFORMANCE_TEST(Map, MemoryPoolAllocator)
 {
-    Allocator allocator(numberOfIterations);
+    Allocator allocator(growByNumberOfElements);
     MemoryPoolMap testMap(MemoryPoolMap::key_compare(), allocator);
 
     for(unsigned iteration = 0; iteration < numberOfIterations; iteration++)
