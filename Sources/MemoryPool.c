@@ -34,36 +34,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 void initializeMemoryPool(struct MemoryPool *memoryPool,
     void *memoryRegion, size_t numberOfBlocks, size_t blockSize)
 {
-    if(blockSize < sizeof(void *))
-        blockSize = sizeof(void *);
-
-    memoryPool->blockSize = blockSize;
-    memoryPool->numberOfNotYetUsedBlocks = numberOfBlocks;
-    memoryPool->notYetUsedBlocks = memoryRegion;
-    memoryPool->firstFreeBlock = NULL;
+    inlinedInitializeMemoryPool(memoryPool, memoryRegion, numberOfBlocks, blockSize);
 }
 
 void *allocateBlock(struct MemoryPool *memoryPool)
 {
-    void *pointer;
-
-    pointer = memoryPool->firstFreeBlock;
-    if(pointer) {
-        memoryPool->firstFreeBlock = *(void **) pointer;
-        return pointer;
-    }
-
-    if(memoryPool->numberOfNotYetUsedBlocks) {
-        pointer = memoryPool->notYetUsedBlocks;
-        memoryPool->notYetUsedBlocks = ((uint8_t *) pointer) + memoryPool->blockSize;
-        memoryPool->numberOfNotYetUsedBlocks--;
-    }
-
-    return pointer;
+    return inlinedAllocateBlock(memoryPool);
 }
 
 void releaseBlock(struct MemoryPool *memoryPool, void *pointer)
 {
-    *(void **) pointer = memoryPool->firstFreeBlock;
-    memoryPool->firstFreeBlock = pointer;
+    inlinedReleaseBlock(memoryPool, pointer);
 }

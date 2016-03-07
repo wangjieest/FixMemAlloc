@@ -42,7 +42,7 @@ class DynamicMemoryPool : protected MemoryPool
         DynamicMemoryPool(std::size_t numberOfBlocks)
         {
             memoryRegion = numberOfBlocks ? new DataType[numberOfBlocks] : NULL;
-            ::initializeMemoryPool(this, memoryRegion, numberOfBlocks, sizeof(DataType));
+            ::inlinedInitializeMemoryPool(this, memoryRegion, numberOfBlocks, sizeof(DataType));
         }
 
         ~DynamicMemoryPool()
@@ -52,13 +52,13 @@ class DynamicMemoryPool : protected MemoryPool
 
         DataType *allocateBlock()
         {
-            void *pointer = ::allocateBlock(this);
+            void *pointer = ::inlinedAllocateBlock(this);
             return static_cast<DataType *>(pointer);
         }
 
         void releaseBlock(DataType *pointer)
         {
-            ::releaseBlock(this, pointer);
+            ::inlinedReleaseBlock(this, pointer);
         }
 
 

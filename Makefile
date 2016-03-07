@@ -18,7 +18,7 @@ INCLUDE := \
 	$(PRJ_DIR)/Wrappers \
 	$(PRJ_DIR)/Examples
 
-CCFLAGS += -std=c89 -Wall -pedantic -O2 -march=native
+CCFLAGS += -std=c99 -Wall -pedantic -O2 -march=native
 CXXFLAGS += -std=c++98 -Wall -pedantic -O2 -march=native
 
 CPPFLAGS += $(foreach inc_dir,$(INCLUDE),-I$(inc_dir))

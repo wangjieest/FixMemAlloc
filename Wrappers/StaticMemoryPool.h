@@ -41,18 +41,18 @@ class StaticMemoryPool : protected MemoryPool
 
         StaticMemoryPool(DataType *memoryRegion, std::size_t numberOfBlocks)
         {
-            ::initializeMemoryPool(this, memoryRegion, numberOfBlocks, sizeof(DataType));
+            ::inlinedInitializeMemoryPool(this, memoryRegion, numberOfBlocks, sizeof(DataType));
         }
 
         DataType *allocateBlock()
         {
-            void *pointer = ::allocateBlock(this);
+            void *pointer = ::inlinedAllocateBlock(this);
             return static_cast<DataType *>(pointer);
         }
 
         void releaseBlock(DataType *pointer)
         {
-            ::releaseBlock(this, pointer);
+            ::inlinedReleaseBlock(this, pointer);
         }
 
 

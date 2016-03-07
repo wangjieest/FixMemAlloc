@@ -43,7 +43,7 @@ class GrowingMemoryPool : protected MemoryPool
             growByNumberOfBlocks(growByNumberOfBlocks),
             firstMemoryRegion(NULL)
         {
-            ::initializeMemoryPool(this, NULL, 0, sizeof(DataType));
+            ::inlinedInitializeMemoryPool(this, NULL, 0, sizeof(DataType));
         }
 
         ~GrowingMemoryPool()
@@ -59,11 +59,11 @@ class GrowingMemoryPool : protected MemoryPool
 
         DataType *allocateBlock()
         {
-            void *pointer = ::allocateBlock(this);
+            void *pointer = ::inlinedAllocateBlock(this);
 
             if(!pointer) {
                 allocateNewMemoryRegion();
-                pointer = ::allocateBlock(this);
+                pointer = ::inlinedAllocateBlock(this);
             }
 
             return static_cast<DataType *>(pointer);
@@ -71,7 +71,7 @@ class GrowingMemoryPool : protected MemoryPool
 
         void releaseBlock(DataType *pointer)
         {
-            ::releaseBlock(this, pointer);
+            ::inlinedReleaseBlock(this, pointer);
         }
 
 

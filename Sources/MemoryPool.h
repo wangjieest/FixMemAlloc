@@ -43,6 +43,43 @@ struct MemoryPool
     void *firstFreeBlock;
 };
 
+inline void inlinedInitializeMemoryPool(struct MemoryPool *memoryPool,
+    void *memoryRegion, size_t numberOfBlocks, size_t blockSize)
+{
+    if(blockSize < sizeof(void *))
+        blockSize = sizeof(void *);
+
+    memoryPool->blockSize = blockSize;
+    memoryPool->numberOfNotYetUsedBlocks = numberOfBlocks;
+    memoryPool->notYetUsedBlocks = memoryRegion;
+    memoryPool->firstFreeBlock = NULL;
+}
+
+inline void *inlinedAllocateBlock(struct MemoryPool *memoryPool)
+{
+    void *pointer;
+
+    pointer = memoryPool->firstFreeBlock;
+    if(pointer) {
+        memoryPool->firstFreeBlock = *(void **) pointer;
+        return pointer;
+    }
+
+    if(memoryPool->numberOfNotYetUsedBlocks) {
+        pointer = memoryPool->notYetUsedBlocks;
+        memoryPool->notYetUsedBlocks = ((uint8_t *) pointer) + memoryPool->blockSize;
+        memoryPool->numberOfNotYetUsedBlocks--;
+    }
+
+    return pointer;
+}
+
+inline void inlinedReleaseBlock(struct MemoryPool *memoryPool, void *pointer)
+{
+    *(void **) pointer = memoryPool->firstFreeBlock;
+    memoryPool->firstFreeBlock = pointer;
+}
+
 #ifdef __cplusplus
     extern "C" {
 #endif
