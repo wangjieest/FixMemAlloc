@@ -35,6 +35,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 #include <stddef.h>
 #include <stdint.h>
 
+#ifdef _MSC_VER
+  #define INLINE __inline
+#else
+  #define INLINE inline
+#endif
+
 struct MemoryPool
 {
     size_t blockSize;
@@ -43,7 +49,7 @@ struct MemoryPool
     void *firstFreeBlock;
 };
 
-inline void inlinedInitializeMemoryPool(struct MemoryPool *memoryPool,
+INLINE void inlinedInitializeMemoryPool(struct MemoryPool *memoryPool,
     void *memoryRegion, size_t numberOfBlocks, size_t blockSize)
 {
     if(blockSize < sizeof(void *))
@@ -55,7 +61,7 @@ inline void inlinedInitializeMemoryPool(struct MemoryPool *memoryPool,
     memoryPool->firstFreeBlock = NULL;
 }
 
-inline void *inlinedAllocateBlock(struct MemoryPool *memoryPool)
+INLINE void *inlinedAllocateBlock(struct MemoryPool *memoryPool)
 {
     void *pointer;
 
@@ -74,7 +80,7 @@ inline void *inlinedAllocateBlock(struct MemoryPool *memoryPool)
     return pointer;
 }
 
-inline void inlinedReleaseBlock(struct MemoryPool *memoryPool, void *pointer)
+INLINE void inlinedReleaseBlock(struct MemoryPool *memoryPool, void *pointer)
 {
     *(void **) pointer = memoryPool->firstFreeBlock;
     memoryPool->firstFreeBlock = pointer;

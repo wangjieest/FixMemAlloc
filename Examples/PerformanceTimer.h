@@ -32,34 +32,66 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 #ifndef PerformanceTimerH
 #define PerformanceTimerH
 
-#include <time.h>
+#if defined(_WIN32) || defined(_WIN64)
+    #include <windows.h>
+#elif defined(__linux__)
+    #include <time.h>
+#else
+    #error Unsupported operating system
+#endif
 
 class PerformanceTimer
 {
     public:
+    
+        PerformanceTimer()
+        {
+            #if defined(_WIN32) || defined(_WIN64)
+                QueryPerformanceFrequency(&frequency);
+            #endif
+        }
 
         inline void start()
         {
-            clock_gettime(CLOCK_MONOTONIC, &startTime);
+            #if defined(_WIN32) || defined(_WIN64)
+                QueryPerformanceCounter(&startTime);
+            #else
+                clock_gettime(CLOCK_MONOTONIC, &startTime);
+            #endif
         }
 
         inline void stop()
         {
-            clock_gettime(CLOCK_MONOTONIC, &stopTime);
+            #if defined(_WIN32) || defined(_WIN64)
+                QueryPerformanceCounter(&stopTime);
+            #else
+                clock_gettime(CLOCK_MONOTONIC, &stopTime);
+            #endif
         }
 
-        inline double getTime() const
+        double getTime() const
         {
-            return
-                stopTime.tv_sec + stopTime.tv_nsec * 1e-9 -
-                startTime.tv_sec - startTime.tv_nsec * 1e-9;
+            #if defined(_WIN32) || defined(_WIN64)
+                return (stopTime.QuadPart - startTime.QuadPart) /
+                    (double) (frequency.QuadPart);
+            #else
+                return
+                    stopTime.tv_sec + stopTime.tv_nsec * 1e-9 -
+                    startTime.tv_sec - startTime.tv_nsec * 1e-9;
+            #endif
         }
 
 
     private:
-
-        timespec startTime;
-        timespec stopTime;
+    
+        #if defined(_WIN32) || defined(_WIN64)
+            LARGE_INTEGER frequency;
+            LARGE_INTEGER startTime;
+            LARGE_INTEGER stopTime;            
+        #else
+            timespec startTime;
+            timespec stopTime;
+        #endif
 };
 
 #endif
