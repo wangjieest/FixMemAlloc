@@ -47,11 +47,16 @@ class StaticMemoryPool : protected MemoryPool
         DataType *allocateBlock()
         {
             void *pointer = ::inlinedAllocateBlock(this);
-            return static_cast<DataType *>(pointer);
+
+            DataType *data = static_cast<DataType *>(pointer);
+            new (data) DataType;
+
+            return data;
         }
 
         void releaseBlock(DataType *pointer)
         {
+            pointer->~DataType();
             ::inlinedReleaseBlock(this, pointer);
         }
 

@@ -35,6 +35,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 #include <stddef.h>
 #include <stdint.h>
 
+#define MIN_MEMORY_POOL_BLOCK_SIZE sizeof(void *)
+
 #ifdef _MSC_VER
   #define INLINE __inline
 #else
@@ -52,8 +54,8 @@ struct MemoryPool
 INLINE void inlinedInitializeMemoryPool(struct MemoryPool *memoryPool,
     void *memoryRegion, size_t numberOfBlocks, size_t blockSize)
 {
-    if(blockSize < sizeof(void *))
-        blockSize = sizeof(void *);
+    if(blockSize < MIN_MEMORY_POOL_BLOCK_SIZE)
+        numberOfBlocks = 0;
 
     memoryPool->blockSize = blockSize;
     memoryPool->numberOfNotYetUsedBlocks = numberOfBlocks;

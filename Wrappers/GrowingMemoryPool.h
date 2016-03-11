@@ -52,7 +52,7 @@ class GrowingMemoryPool : protected MemoryPool
                 MemoryRegion *memoryRegion = firstMemoryRegion;
                 firstMemoryRegion = memoryRegion->nextMemoryRegion;
 
-                delete[] memoryRegion->buffer;
+                free(memoryRegion->buffer);
                 delete memoryRegion;
             }
         }
@@ -66,11 +66,15 @@ class GrowingMemoryPool : protected MemoryPool
                 pointer = ::inlinedAllocateBlock(this);
             }
 
-            return static_cast<DataType *>(pointer);
+            DataType *data = static_cast<DataType *>(pointer);
+            new (data) DataType;
+
+            return data;
         }
 
         void releaseBlock(DataType *pointer)
         {
+            pointer->~DataType();
             ::inlinedReleaseBlock(this, pointer);
         }
 
@@ -80,7 +84,7 @@ class GrowingMemoryPool : protected MemoryPool
         struct MemoryRegion
         {
             MemoryRegion *nextMemoryRegion;
-            DataType *buffer;
+            void *buffer;
         };
 
         std::size_t growByNumberOfBlocks;
@@ -88,9 +92,14 @@ class GrowingMemoryPool : protected MemoryPool
 
         void allocateNewMemoryRegion()
         {
+            unsigned blockSize = sizeof(DataType);
+            if(blockSize < MIN_MEMORY_POOL_BLOCK_SIZE)
+                blockSize = MIN_MEMORY_POOL_BLOCK_SIZE;
+
             MemoryRegion *memoryRegion = new MemoryRegion;
-            memoryRegion->buffer = new DataType[growByNumberOfBlocks];
             memoryRegion->nextMemoryRegion = firstMemoryRegion;
+            memoryRegion->buffer = malloc(blockSize * growByNumberOfBlocks);
+
             ::initializeMemoryPool(this, memoryRegion->buffer, growByNumberOfBlocks, sizeof(DataType));
         }
 
