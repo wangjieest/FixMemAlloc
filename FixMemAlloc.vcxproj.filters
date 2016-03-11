@@ -1,57 +1,54 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="Examples">
+      <UniqueIdentifier>{2f259e69-2be8-4254-8130-57a5d0a3e15e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    <Filter Include="Sources">
+      <UniqueIdentifier>{56ed900f-453f-4a69-b601-983e33c77f58}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="Wrappers">
+      <UniqueIdentifier>{8441c8b8-d52a-43f2-b4a8-9d6f37c7c26f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Sources\MemoryPool.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Examples\Set.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Examples\List.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Examples\Map.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Examples\PerformanceTest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Sources\MemoryPool.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Wrappers\GrowingMemoryPool.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Wrappers\MemoryPoolAllocator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Wrappers\StaticMemoryPool.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Wrappers\DynamicMemoryPool.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Examples\PerformanceTest.h">
-      <Filter>Header Files</Filter>
+      <Filter>Examples</Filter>
     </ClInclude>
     <ClInclude Include="Examples\PerformanceTimer.h">
-      <Filter>Header Files</Filter>
+      <Filter>Examples</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\MemoryPool.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Wrappers\MemoryPoolAllocator.h">
+      <Filter>Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="Wrappers\StaticMemoryPool.h">
+      <Filter>Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="Wrappers\DynamicMemoryPool.h">
+      <Filter>Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="Wrappers\GrowingMemoryPool.h">
+      <Filter>Wrappers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Examples\Set.cpp">
+      <Filter>Examples</Filter>
+    </ClCompile>
+    <ClCompile Include="Examples\List.cpp">
+      <Filter>Examples</Filter>
+    </ClCompile>
+    <ClCompile Include="Examples\Map.cpp">
+      <Filter>Examples</Filter>
+    </ClCompile>
+    <ClCompile Include="Examples\PerformanceTest.cpp">
+      <Filter>Examples</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\MemoryPool.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

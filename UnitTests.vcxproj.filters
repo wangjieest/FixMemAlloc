@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Externals">
+      <UniqueIdentifier>{a6070d9e-1047-4955-a36f-049c23e12b21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources">
+      <UniqueIdentifier>{eda04526-f59b-494d-aa28-3ab11b0fb11a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UnitTests">
+      <UniqueIdentifier>{aff54248-49fe-4fd6-8d27-54c67320d04e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Wrappers">
+      <UniqueIdentifier>{909b86e9-e24a-4e49-89ba-ff117379755d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Externals\gtest_main.cc">
+      <Filter>Externals</Filter>
+    </ClCompile>
+    <ClCompile Include="Externals\gtest-all.cc">
+      <Filter>Externals</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\MemoryPool.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitTests\UnitTests.cpp">
+      <Filter>UnitTests</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Externals\gtest.h">
+      <Filter>Externals</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\MemoryPool.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Wrappers\MemoryPoolAllocator.h">
+      <Filter>Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="Wrappers\StaticMemoryPool.h">
+      <Filter>Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="Wrappers\DynamicMemoryPool.h">
+      <Filter>Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="Wrappers\GrowingMemoryPool.h">
+      <Filter>Wrappers</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

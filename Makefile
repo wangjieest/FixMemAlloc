@@ -2,7 +2,7 @@ TARGET := examples
 
 PRJ_DIR := $(realpath .)
 TGT_DIR := $(PRJ_DIR)/Builds
-OBJ_DIR := $(TGT_DIR)/Intermediate
+OBJ_DIR := $(TGT_DIR)/FixMemAlloc
 
 CC_SRC := \
 	$(PRJ_DIR)/Sources/MemoryPool.c

@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{541A48E4-2FDD-48BB-A0D1-1FBA88F9D5AE}</ProjectGuid>
+    <ProjectGuid>{BF8C4850-2649-4595-9225-3A60D3846838}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>FixMemAlloc</RootNamespace>
+    <RootNamespace>UnitTests</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -69,34 +69,34 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)Builds\</OutDir>
-    <IntDir>$(SolutionDir)Builds\FixMemAlloc\</IntDir>
-    <TargetName>examples</TargetName>
-    <IncludePath>$(SolutionDir)Examples;$(SolutionDir)Sources;$(SolutionDir)Wrappers;$(IncludePath)</IncludePath>
-    <SourcePath>$(SolutionDir)Examples;$(SolutionDir)Sources;$(SolutionDir)Wrappers;$(VC_SourcePath);</SourcePath>
+    <IntDir>$(SolutionDir)Builds\UnitTests\</IntDir>
+    <TargetName>tests</TargetName>
+    <IncludePath>$(SolutionDir)Externals;$(SolutionDir)Sources;$(SolutionDir)UnitTests;$(SolutionDir)Wrappers;$(IncludePath)</IncludePath>
+    <SourcePath>$(SolutionDir)Externals;$(SolutionDir)Sources;$(SolutionDir)UnitTests;$(SolutionDir)Wrappers;$(VC_SourcePath);</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)Builds\</OutDir>
-    <IntDir>$(SolutionDir)Builds\FixMemAlloc\</IntDir>
-    <TargetName>examples</TargetName>
-    <IncludePath>$(SolutionDir)Examples;$(SolutionDir)Sources;$(SolutionDir)Wrappers;$(IncludePath)</IncludePath>
-    <SourcePath>$(SolutionDir)Examples;$(SolutionDir)Sources;$(SolutionDir)Wrappers;$(VC_SourcePath);</SourcePath>
+    <IntDir>$(SolutionDir)Builds\UnitTests\</IntDir>
+    <TargetName>tests</TargetName>
+    <IncludePath>$(SolutionDir)Externals;$(SolutionDir)Sources;$(SolutionDir)UnitTests;$(SolutionDir)Wrappers;$(IncludePath)</IncludePath>
+    <SourcePath>$(SolutionDir)Externals;$(SolutionDir)Sources;$(SolutionDir)UnitTests;$(SolutionDir)Wrappers;$(VC_SourcePath);</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)Builds\</OutDir>
-    <IntDir>$(SolutionDir)Builds\FixMemAlloc\</IntDir>
-    <TargetName>examples</TargetName>
-    <IncludePath>$(SolutionDir)Examples;$(SolutionDir)Sources;$(SolutionDir)Wrappers;$(IncludePath)</IncludePath>
-    <SourcePath>$(SolutionDir)Examples;$(SolutionDir)Sources;$(SolutionDir)Wrappers;$(VC_SourcePath);</SourcePath>
+    <IntDir>$(SolutionDir)Builds\UnitTests\</IntDir>
+    <TargetName>tests</TargetName>
+    <IncludePath>$(SolutionDir)Externals;$(SolutionDir)Sources;$(SolutionDir)UnitTests;$(SolutionDir)Wrappers;$(IncludePath)</IncludePath>
+    <SourcePath>$(SolutionDir)Externals;$(SolutionDir)Sources;$(SolutionDir)UnitTests;$(SolutionDir)Wrappers;$(VC_SourcePath);</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)Builds\</OutDir>
-    <IntDir>$(SolutionDir)Builds\FixMemAlloc\</IntDir>
-    <TargetName>examples</TargetName>
-    <IncludePath>$(SolutionDir)Examples;$(SolutionDir)Sources;$(SolutionDir)Wrappers;$(IncludePath)</IncludePath>
-    <SourcePath>$(SolutionDir)Examples;$(SolutionDir)Sources;$(SolutionDir)Wrappers;$(VC_SourcePath);</SourcePath>
+    <IntDir>$(SolutionDir)Builds\UnitTests\</IntDir>
+    <TargetName>tests</TargetName>
+    <IncludePath>$(SolutionDir)Externals;$(SolutionDir)Sources;$(SolutionDir)UnitTests;$(SolutionDir)Wrappers;$(IncludePath)</IncludePath>
+    <SourcePath>$(SolutionDir)Externals;$(SolutionDir)Sources;$(SolutionDir)UnitTests;$(SolutionDir)Wrappers;$(VC_SourcePath);</SourcePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -159,20 +159,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Examples\PerformanceTest.h" />
-    <ClInclude Include="Examples\PerformanceTimer.h" />
+    <ClCompile Include="Externals\gtest-all.cc" />
+    <ClCompile Include="Externals\gtest_main.cc" />
+    <ClCompile Include="Sources\MemoryPool.c" />
+    <ClCompile Include="UnitTests\UnitTests.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Externals\gtest.h" />
     <ClInclude Include="Sources\MemoryPool.h" />
     <ClInclude Include="Wrappers\DynamicMemoryPool.h" />
     <ClInclude Include="Wrappers\GrowingMemoryPool.h" />
     <ClInclude Include="Wrappers\MemoryPoolAllocator.h" />
     <ClInclude Include="Wrappers\StaticMemoryPool.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Examples\List.cpp" />
-    <ClCompile Include="Examples\Map.cpp" />
-    <ClCompile Include="Examples\PerformanceTest.cpp" />
-    <ClCompile Include="Examples\Set.cpp" />
-    <ClCompile Include="Sources\MemoryPool.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
