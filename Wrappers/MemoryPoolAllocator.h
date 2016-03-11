@@ -33,10 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 #define MemoryPoolAllocatorH
 
 #include <memory>
-#include "GrowingMemoryPool.h"
+#include "MemoryPool.h"
 
 template <class T>
-class MemoryPoolAllocator : protected GrowingMemoryPool<T>
+class MemoryPoolAllocator : protected MemoryPool
 {
     public:
 
@@ -57,22 +57,36 @@ class MemoryPoolAllocator : protected GrowingMemoryPool<T>
         const size_type growByNumberOfBlocks;
 
         MemoryPoolAllocator(size_type growByNumberOfBlocks = 1024) :
-            GrowingMemoryPool<T>(growByNumberOfBlocks),
-            growByNumberOfBlocks(growByNumberOfBlocks)
+            growByNumberOfBlocks(growByNumberOfBlocks),
+            firstMemoryRegion(NULL)
         {
+            ::initializeMemoryPool(this, NULL, 0, sizeof(T));
         }
 
         MemoryPoolAllocator(const MemoryPoolAllocator &allocator) :
-            GrowingMemoryPool<T>(allocator.growByNumberOfBlocks),
-            growByNumberOfBlocks(allocator.growByNumberOfBlocks)
+            growByNumberOfBlocks(allocator.growByNumberOfBlocks),
+            firstMemoryRegion(NULL)
         {
+            ::initializeMemoryPool(this, NULL, 0, sizeof(T));
         }
 
         template <class U>
         MemoryPoolAllocator(const MemoryPoolAllocator<U> &other) :
-            GrowingMemoryPool<T>(other.growByNumberOfBlocks),
-            growByNumberOfBlocks(other.growByNumberOfBlocks)
+            growByNumberOfBlocks(other.growByNumberOfBlocks),
+            firstMemoryRegion(NULL)
         {
+            ::initializeMemoryPool(this, NULL, 0, sizeof(T));
+        }
+
+        ~MemoryPoolAllocator()
+        {
+            while(firstMemoryRegion) {
+                MemoryRegion *memoryRegion = firstMemoryRegion;
+                firstMemoryRegion = memoryRegion->nextMemoryRegion;
+
+                free(memoryRegion->buffer);
+                delete memoryRegion;
+            }
         }
 
         pointer allocate(size_type n, std::allocator<void>::const_pointer hint = 0)
@@ -80,7 +94,7 @@ class MemoryPoolAllocator : protected GrowingMemoryPool<T>
             if(n != 1 || hint)
                 throw std::bad_alloc();
 
-            pointer p = GrowingMemoryPool<T>::allocateBlock();
+            pointer p = allocateBlock();
             if(!p)
                 throw std::bad_alloc();
 
@@ -89,7 +103,7 @@ class MemoryPoolAllocator : protected GrowingMemoryPool<T>
 
         void deallocate(pointer p, size_type n)
         {
-            GrowingMemoryPool<T>::releaseBlock(p);
+            ::inlinedReleaseBlock(this, p);
         }
 
         void construct(pointer p, const_reference val)
@@ -100,6 +114,42 @@ class MemoryPoolAllocator : protected GrowingMemoryPool<T>
         void destroy(pointer p)
         {
             p->~T();
+        }
+
+
+    private:
+
+        struct MemoryRegion
+        {
+            MemoryRegion *nextMemoryRegion;
+            void *buffer;
+        };
+
+        MemoryRegion *firstMemoryRegion;
+
+        void allocateNewMemoryRegion()
+        {
+            unsigned blockSize = sizeof(T);
+            if(blockSize < MIN_MEMORY_POOL_BLOCK_SIZE)
+                blockSize = MIN_MEMORY_POOL_BLOCK_SIZE;
+
+            MemoryRegion *memoryRegion = new MemoryRegion;
+            memoryRegion->nextMemoryRegion = firstMemoryRegion;
+            memoryRegion->buffer = malloc(blockSize * growByNumberOfBlocks);
+
+            ::initializeMemoryPool(this, memoryRegion->buffer, growByNumberOfBlocks, sizeof(T));
+        }
+
+        pointer allocateBlock()
+        {
+            void *data = ::inlinedAllocateBlock(this);
+
+            if(!data) {
+                allocateNewMemoryRegion();
+                data = ::inlinedAllocateBlock(this);
+            }
+
+            return static_cast<pointer>(data);
         }
 };
 
