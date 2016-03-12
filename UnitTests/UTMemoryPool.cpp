@@ -46,7 +46,7 @@ TEST(MemoryPool, EmptyMemoryRegion)
 
 TEST(MemoryPool, SingleElement)
 {
-    int buffer;
+    uint64_t buffer;
 
     MemoryPool memoryPool;
     initializeMemoryPool(&memoryPool, &buffer, 1, sizeof(buffer));
@@ -115,8 +115,8 @@ TEST(MemoryPool, SimpleAllocScheme)
 
 TEST(MemoryPool, MultipleRegions)
 {
-    int region1;
-    int region2;
+    uint64_t region1;
+    uint64_t region2;
 
     MemoryPool memoryPool;
     initializeMemoryPool(&memoryPool, &region1, 1, sizeof(region1));
@@ -134,8 +134,8 @@ TEST(MemoryPool, MultipleRegions)
 
 TEST(MemoryPool, RegionAccumulation)
 {
-    int region1;
-    int region2;
+    uint64_t region1;
+    uint64_t region2;
 
     MemoryPool memoryPool;
     initializeMemoryPool(&memoryPool, NULL, 0, sizeof(region1));
@@ -154,7 +154,7 @@ TEST(MemoryPool, RegionAccumulation)
 
 TEST(MemoryPool, StressTest)
 {
-    unsigned buffer[128];
+    uint64_t buffer[128];
     const size_t blockSize = sizeof(buffer[0]);
     const size_t numberOfBlocks = sizeof(buffer) / blockSize;
 
