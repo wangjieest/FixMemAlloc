@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 #define MemoryPoolAllocatorH
 
 #include <memory>
+#include <cstdlib>
 #include "MemoryPool.h"
 
 template <class T>
