@@ -162,7 +162,7 @@
     <ClCompile Include="Externals\gtest-all.cc" />
     <ClCompile Include="Externals\gtest_main.cc" />
     <ClCompile Include="Sources\MemoryPool.c" />
-    <ClCompile Include="UnitTests\UnitTests.cpp" />
+    <ClCompile Include="UnitTests\UTMemoryPool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Externals\gtest.h" />

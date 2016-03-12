@@ -24,7 +24,7 @@
     <ClCompile Include="Sources\MemoryPool.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="UnitTests\UnitTests.cpp">
+    <ClCompile Include="UnitTests\UTMemoryPool.cpp">
       <Filter>UnitTests</Filter>
     </ClCompile>
   </ItemGroup>
