@@ -36,7 +36,7 @@ TEST(MemoryPool, EmptyMemoryRegion)
 {
     MemoryPool memoryPool;
     initializeMemoryPool(&memoryPool, NULL, 0, 1024);
-    
+
     void *ptr1 = allocateBlock(&memoryPool);
     void *ptr2 = allocateBlock(&memoryPool);
 
@@ -139,7 +139,7 @@ TEST(MemoryPool, RegionAccumulation)
 
     MemoryPool memoryPool;
     initializeMemoryPool(&memoryPool, NULL, 0, sizeof(region1));
-    
+
     releaseBlock(&memoryPool, &region1);
     releaseBlock(&memoryPool, &region2);
 
@@ -160,24 +160,24 @@ TEST(MemoryPool, StressTest)
 
     MemoryPool memoryPool;
     initializeMemoryPool(&memoryPool, &buffer, numberOfBlocks, blockSize);
-    
+
     unsigned *mask[numberOfBlocks];
     memset(mask, 0, sizeof(mask));
 
-    srand(0); int x = 0, y = 0;
+    srand(0);
     for(unsigned iteration = 0; iteration < 16 * 1024; iteration++) {
         unsigned itemIndex = rand() % numberOfBlocks;
 
         if(!mask[itemIndex]) {
             mask[itemIndex] = (unsigned *) allocateBlock(&memoryPool);
             EXPECT_TRUE(mask[itemIndex] != NULL);
-            *mask[itemIndex] = iteration; x++;
+            *mask[itemIndex] = iteration;
         }
 
         else {
             EXPECT_TRUE(*mask[itemIndex] < iteration);
             releaseBlock(&memoryPool, mask[itemIndex]);
-            mask[itemIndex] = NULL; y++;
+            mask[itemIndex] = NULL;
         }
     }
 }

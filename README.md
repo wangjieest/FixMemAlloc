@@ -8,7 +8,7 @@ key role. Additional C++ wrappers extends usability for other applications
 where fast memory allocation/deallocation is required e.g. lists, queues etc.
 
 ## License
-Copyright (c) 2016, Mariusz Moczala
+Copyright (c) 2016, Mariusz Moczala  
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

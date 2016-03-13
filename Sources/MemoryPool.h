@@ -35,13 +35,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 #include <stddef.h>
 #include <stdint.h>
 
-#define MIN_MEMORY_POOL_BLOCK_SIZE sizeof(void *)
+#include "Inline.h"
 
-#ifdef _MSC_VER
-  #define INLINE __inline
-#else
-  #define INLINE inline
-#endif
+#define MIN_MEMORY_POOL_BLOCK_SIZE sizeof(void *)
 
 struct MemoryPool
 {

@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Externals\gtest_main.cc">
+    <ClCompile Include="Externals\gtest-main.cpp">
       <Filter>Externals</Filter>
     </ClCompile>
-    <ClCompile Include="Externals\gtest-all.cc">
+    <ClCompile Include="Externals\gtest-all.cpp">
       <Filter>Externals</Filter>
     </ClCompile>
     <ClCompile Include="Sources\MemoryPool.c">

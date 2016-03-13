@@ -1,4 +1,3 @@
-#
 # FixMemAlloc - Fixed-size blocks allocation for C and C++
 #
 # Copyright (c) 2016, Mariusz Moczala
@@ -28,22 +27,30 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
 
-.PHONY: all clean distclean default examples tests
+
+.PHONY: default all clean distclean examples tests
 
 HOME_DIR := $(realpath .)
 BUILD_DIR := $(HOME_DIR)/Builds
+
+default: all
+
+all: examples tests
+
+clean:
+	@-$(RM) -rf $(PROJECT_DIR) $(TEST_DIR)
+
+distclean:
+	@-$(RM) -rf $(BUILD_DIR)
 
 
 
 PROJECT_TARGET := examples
 PROJECT_DIR := $(BUILD_DIR)/FixMemAlloc
 
-PROJECT_SOURCES_CC := \
-	$(HOME_DIR)/Sources/MemoryPool.c
-
-PROJECT_SOURCES_CXX := \
+PROJECT_SOURCES := \
+	$(HOME_DIR)/Sources/MemoryPool.c \
 	$(HOME_DIR)/Examples/PerformanceTest.cpp \
 	$(HOME_DIR)/Examples/List.cpp \
 	$(HOME_DIR)/Examples/Set.cpp \
@@ -54,59 +61,18 @@ PROJECT_INCLUDES := \
 	$(HOME_DIR)/Wrappers \
 	$(HOME_DIR)/Examples
 
-PROJECT_FLAGS_LD := -lpthread
-PROJECT_FLAGS_CC += $(CCFLAGS) -std=c99 -Wall -pedantic -O2 -march=native
-PROJECT_FLAGS_CXX += $(CXXFLAGS) -std=c++98 -Wall -pedantic -O2 -march=native
-PROJECT_FLAGS_CPP += $(CPPFLAGS) $(foreach inc_dir,$(PROJECT_INCLUDES),-I$(inc_dir))
-PROJECT_OBJ_CC := $(foreach cc_file,${PROJECT_SOURCES_CC:.c=.o},$(subst $(HOME_DIR),$(PROJECT_DIR),$(cc_file)))
-PROJECT_OBJ_CXX := $(foreach cxx_file,${PROJECT_SOURCES_CXX:.cpp=.o},$(subst $(HOME_DIR),$(PROJECT_DIR),$(cxx_file)))
-
-
-
-TEST_TARGET := tests
-TEST_DIR := $(BUILD_DIR)/UnitTests
-
-TEST_SOURCES_CC := \
-	$(HOME_DIR)/Sources/MemoryPool.c
-
-TEST_SOURCES_CXX := \
-	$(HOME_DIR)/Externals/gtest-all.cpp \
-	$(HOME_DIR)/Externals/gtest-main.cpp \
-	$(HOME_DIR)/UnitTests/UTMemoryPool.cpp
-
-TEST_INCLUDES := \
-	$(HOME_DIR)/Externals \
-	$(HOME_DIR)/Sources \
-	$(HOME_DIR)/Wrappers \
-	$(HOME_DIR)/UnitTests
-
-TEST_FLAGS_LD := -lpthread
-TEST_FLAGS_CC := $(CCFLAGS) -std=c99 -Wall -pedantic -O2 -march=native
-TEST_FLAGS_CXX := $(CXXFLAG) -std=c++11 -Wall -pedantic -O2 -march=native
-TEST_FLAGS_CPP := $(CPPFLAG) $(foreach inc_dir,$(TEST_INCLUDES),-I$(inc_dir))
-TEST_OBJ_CC := $(foreach cc_file,${TEST_SOURCES_CC:.c=.o},$(subst $(HOME_DIR),$(TEST_DIR),$(cc_file)))
-TEST_OBJ_CXX := $(foreach cxx_file,${TEST_SOURCES_CXX:.cpp=.o},$(subst $(HOME_DIR),$(TEST_DIR),$(cxx_file)))
-
-
-
-default: all
-
-all: $(PROJECT_TARGET) $(TEST_TARGET)
+PROJECT_FLAGS_LD := $(LDFLAGS) $(LDLIBS)
+PROJECT_FLAGS_CC := $(CFLAGS) -std=c89 -Wall -pedantic -O2 -march=native
+PROJECT_FLAGS_CXX := $(CXXFLAGS) -std=c++98 -Wall -pedantic -O2 -march=native
+PROJECT_FLAGS_CPP := $(CPPFLAGS) $(addprefix -I, $(PROJECT_INCLUDES))
+PROJECT_OBJ := $(subst $(HOME_DIR), $(PROJECT_DIR), $(addsuffix .o, $(basename $(PROJECT_SOURCES))))
 
 $(PROJECT_TARGET): $(BUILD_DIR)/$(PROJECT_TARGET)
 
-$(TEST_TARGET): $(BUILD_DIR)/$(TEST_TARGET)
-
-clean:
-	@-$(RM) -rf $(PROJECT_DIR) $(TEST_DIR)
-
-distclean:
-	@-$(RM) -rf $(BUILD_DIR)
-
-$(BUILD_DIR)/$(PROJECT_TARGET): $(PROJECT_OBJ_CC) $(PROJECT_OBJ_CXX)
+$(BUILD_DIR)/$(PROJECT_TARGET): $(PROJECT_OBJ)
 	@-echo LD: $@
 	@mkdir -p $(dir $@)
-	@$(CXX) $(PROJECT_FLAGS_LD) $(PROJECT_OBJ_CC) $(PROJECT_OBJ_CXX) -o $(BUILD_DIR)/$(PROJECT_TARGET)
+	@$(CXX) $(PROJECT_FLAGS_LD) $(PROJECT_OBJ) -o $(BUILD_DIR)/$(PROJECT_TARGET)
 
 $(PROJECT_DIR)%.o: $(HOME_DIR)%.c
 	@-echo CC: $<
@@ -118,18 +84,46 @@ $(PROJECT_DIR)%.o: $(HOME_DIR)%.cpp
 	@mkdir -p $(dir $@)
 	@$(CXX) $(PROJECT_FLAGS_CPP) $(PROJECT_FLAGS_CXX) -c $< -o $@
 
-$(BUILD_DIR)/$(TEST_TARGET): $(TEST_OBJ_CC) $(TEST_OBJ_CXX)
+
+
+TEST_TARGET := tests
+TEST_DIR := $(BUILD_DIR)/UnitTests
+
+TEST_SOURCES := \
+	$(HOME_DIR)/Sources/MemoryPool.c \
+	$(HOME_DIR)/Externals/gtest-all.cc \
+	$(HOME_DIR)/Externals/gtest_main.cc \
+	$(HOME_DIR)/UnitTests/UTMemoryPool.cpp
+
+TEST_INCLUDES := \
+	$(HOME_DIR)/Sources \
+	$(HOME_DIR)/Externals \
+	$(HOME_DIR)/UnitTests
+
+TEST_FLAGS_LD := $(LDFLAGS) $(LDLIBS) -lpthread
+TEST_FLAGS_CC := $(CFLAGS) -std=c89 -Wall -pedantic -O2 -march=native
+TEST_FLAGS_CXX := $(CXXFLAGS) -std=c++11 -Wall -pedantic -O2 -march=native
+TEST_FLAGS_CPP := $(CPPFLAGS) $(addprefix -I, $(TEST_INCLUDES))
+TEST_OBJ := $(subst $(HOME_DIR), $(TEST_DIR), $(addsuffix .o, $(basename $(TEST_SOURCES))))
+
+$(TEST_TARGET): $(BUILD_DIR)/$(TEST_TARGET)
+
+$(BUILD_DIR)/$(TEST_TARGET): $(TEST_OBJ)
 	@-echo LD: $@
 	@mkdir -p $(dir $@)
-	@$(CXX) $(TEST_FLAGS_LD) $(TEST_OBJ_CC) $(TEST_OBJ_CXX) -o $(BUILD_DIR)/$(TEST_TARGET)
+	@$(CXX) $(TEST_FLAGS_LD) $(TEST_OBJ) -o $(BUILD_DIR)/$(TEST_TARGET)
 
 $(TEST_DIR)%.o: $(HOME_DIR)%.c
 	@-echo CC: $<
 	@mkdir -p $(dir $@)
 	@$(CC) $(TEST_FLAGS_CPP) $(TEST_FLAGS_CC) -c $< -o $@
 
-$(TEST_DIR)%.o: $(HOME_DIR)%.cpp
+$(TEST_DIR)%.o: $(HOME_DIR)%.cc
 	@-echo CXX: $<
 	@mkdir -p $(dir $@)
 	@$(CXX) $(TEST_FLAGS_CPP) $(TEST_FLAGS_CXX) -c $< -o $@
 
+$(TEST_DIR)%.o: $(HOME_DIR)%.cpp
+	@-echo CXX: $<
+	@mkdir -p $(dir $@)
+	@$(CXX) $(TEST_FLAGS_CPP) $(TEST_FLAGS_CXX) -c $< -o $@
